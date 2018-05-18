@@ -162,7 +162,8 @@ class TableMakerField extends Field
 
                 $i = 0;
                 foreach ($row as $cell) {
-                    $align = $columns[$i]['align'];
+                    $align = $columns[$i]['align'] ?? '';
+
                     $html .= '<td';
                     if (!empty($align)) {
                         $html .= ' align="' . $align . '"';
@@ -288,10 +289,10 @@ class TableMakerField extends Field
             foreach ($value['columns'] as $key => $val) {
                 $columns['col'.$key] = array(
                     'heading' => $val['heading'],
-                    'align' => $val['align'],
-                    'width' => $val['width'],
+                    'align' => $val['align'] ?? '',
+                    'width' => $val['width'] ?? '',
                     'cellSuffix' => $val['cellSuffix'] ?? '',
-                    'type' => 'singleline'
+                    'type' => $val['type'] ?? '',
                 );
             }
         }
@@ -337,22 +338,17 @@ class TableMakerField extends Field
                 'type' => 'singleline',
                 'width' => 30
             ],
-            'width' => array(
-                'heading' => Craft::t('tablemaker', 'Width'),
-                'class' => 'code',
-                'type' => 'number',
-                'width' => 30,
-            ),
-            'align' => array(
-                'heading' => Craft::t('tablemaker', 'Alignment'),
-                'class' => 'thin',
+            'type' => [
+                'heading' => Craft::t('tablemaker', 'Data Type'),
                 'type' => 'select',
-                'options' => array(
-                    'left'   => Craft::t('tablemaker', 'Left'),
-                    'center' => Craft::t('tablemaker', 'Center'),
-                    'right'  => Craft::t('tablemaker', 'Right')
-                )
-            ),
+                'options' => [
+                    'singleline' => 'Text',
+                    'number' => 'Number',
+                    'link' => 'Link',
+                    'checkbox' => 'Checkbox',
+                ],
+                'width' => 30,
+            ],
         );
 
         // init the js

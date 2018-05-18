@@ -196,9 +196,17 @@ Craft.TableMaker = Garnish.Base.extend(
         // re-do columns of rowsTable
         for (var colId in this.columns)
         {
-            // force type of col to be textual
-            this.columns[colId].type = 'singleline';
-            tableHtml += '<th scope="col" class="header">'+(this.columns[colId].heading ? this.columns[colId].heading : '&nbsp;')+'</th>';
+            var column = this.columns[colId];
+            if (
+                column.type != 'number' &&
+                column.type != 'checkbox'
+            )
+            {
+                // force type of col to be textual
+                column.type = 'singleline';
+            }
+
+            tableHtml += '<th scope="col" class="header">'+(column.heading ? column.heading : '&nbsp;')+'</th>';
         }
 
         tableHtml += '<th class="header" colspan="2"></th>' +
@@ -216,10 +224,18 @@ Craft.TableMaker = Garnish.Base.extend(
             var myRow = Craft.EditableTable.createRow(rowId, this.columns, this.rowsTableName, this.rows[rowId]).get(0);
             // We are doing this as Craft is not setting the value of textarea
             var self = this;
-            $.each($(myRow).find('td textarea'), function(index, value) {
-                if ( self.rows[rowId]['col'+index] !== "" ) 
+            $.each($(myRow).find('td textarea, td select, td input[type="checkbox"], td input[type="number"]'), function(index, value) {
+                var oldValue = self.rows[rowId]['col'+index];
+                if ( oldValue !== "" )
                 {
-                    $(value).text(self.rows[rowId]['col'+index]);
+                    if (value.tagName == "SELECT")
+                    {
+                        $(value).val(oldValue);
+                    }
+                    else
+                    {
+                        $(value).text(oldValue);
+                    }
                 }
             });
 
